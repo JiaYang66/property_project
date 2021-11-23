@@ -1,0 +1,28 @@
+# Enable the go modules feature
+export GO111MODULE=on
+# Set the GOPROXY environment variable
+export GOPROXY=https://mirrors.aliyun.com/goproxy/
+export GOPROXY=https://goproxy.cn,direct
+
+
+Redis
+https://blog.csdn.net/wp616455481/article/details/105497922/?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-0.highlightwordscore&spm=1001.2101.3001.4242.1
+
+
+
+文档
+http://yy.yy1668.top:8010/
+495168782@qq.com
+668355
+
+
+用户端：http://192.168.201.75/#/
+管理端：http://192.168.201.75:8088/#/login
+yyzhongrl   pyp123456
+admin        
+后端：http://192.168.201.75:8087/swagger/index.html
+
+主机：192.168.201.75
+数据库：maogang_relocate
+用户名：maogang_relocate
+密码：aEh3atRAMzw2xNiG

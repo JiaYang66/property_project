@@ -1,0 +1,29 @@
+# 服务配置
+app:
+  jwtSecret: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+# 服务配置
+server:
+  # debug or release
+  runMode: debug
+  # 日志是否需要记录 true or false
+  log: false
+  # 端口
+  httpPort: 8848
+  # 超时时间/单位s
+  readTimeout: 60
+  writeTimeout: 60
+
+# 数据库配置
+# 配置内容参考: https://learnku.com/docs/gorm/2018/connecting_to_the_database/3784
+database:
+  # 数据库类型
+  type: mysql
+  # 连接驱动
+  url: maogang_relocate:aEh3atRAMzw2xNiG@tcp(192.168.201.75:3306)/maogang_relocate?charset=utf8&parseTime=True&loc=Local
+
+# Redis配置
+redis:
+  # 连接地址
+  addr: 127.0.0.1:6379
+  # 密码,默认为空
+  password:

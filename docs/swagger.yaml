@@ -1,0 +1,1157 @@
+basePath: '{{.BasePath}}'
+definitions:
+  api.AddContractBody:
+    properties:
+      can_declare:
+        description: 是否可申报(不写默认不可，1为可)
+        type: boolean
+      card_number:
+        description: 身份证号码(必须，可能有多个)
+        type: string
+      change_method:
+        description: "变更方式 \t//受托人关系"
+        type: string
+      collective_land_property_certificate:
+        description: 集体土地房产证字
+        type: string
+      contract_no:
+        description: 合同号(必须)
+        type: string
+      date_of_delivery:
+        description: 交楼日期(必须)
+        type: string
+      date_of_signing:
+        description: 签署协议日期(必须)
+        type: string
+      desc:
+        description: 备注
+        type: string
+      house_number:
+        description: 房屋栋号(必须)
+        type: string
+      house_write_off:
+        description: 是否完成房屋注销
+        type: boolean
+      initial_hq_area:
+        description: 初始回迁面积(必须)
+        type: number
+      is_delivery:
+        description: 是否交齐楼（必须为1）
+        type: boolean
+      old_address:
+        description: 被拆迁的地址(必须)
+        type: string
+      peoples:
+        description: 被拆迁人(至少一个，可能有多个)
+        type: string
+      phone_number1:
+        description: 手机号码1
+        type: string
+      phone_number2:
+        description: 手机号码2
+        type: string
+      proprietor:
+        description: 证载产权人
+        type: string
+      registration:
+        description: 登记字号
+        type: string
+      signatory:
+        description: 签约人(必须)
+        type: string
+      social_category:
+        description: 社别(必须)
+        type: string
+      staging_id:
+        description: 分期id(必须)
+        type: integer
+    required:
+    - card_number
+    - contract_no
+    - date_of_delivery
+    - date_of_signing
+    - house_number
+    - old_address
+    - peoples
+    - signatory
+    - social_category
+    - staging_id
+    type: object
+  api.AddDeclarationBody:
+    properties:
+      contract_no:
+        description: 合同号
+        type: string
+      huxing_id:
+        description: 户型id
+        type: integer
+      time_id:
+        description: 现场确认时段id
+        type: integer
+      trustee:
+        description: 受托人
+        type: string
+      trustee_card_number:
+        description: 受托人身份证号码
+        type: string
+      trustee_phone_number:
+        description: 受托人手机号码
+        type: string
+      trustee_relationship:
+        description: 受托人关系
+        type: string
+    required:
+    - contract_no
+    type: object
+  app.Response:
+    properties:
+      code:
+        type: integer
+      data:
+        type: object
+      msg:
+        type: string
+    type: object
+host: '{{.Host}}'
+info:
+  contact: {}
+  description: 回迁平台
+  license: {}
+  title: relocate
+  version: "1.0"
+paths:
+  /api/v1/accounting:
+    get:
+      parameters:
+      - description: 搜索关键字(合同号、被拆迁人)
+        in: query
+        name: filterName
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 页面大小
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 根据合同号、被拆迁人模糊查询分页查询核算列表（筛选功能）(管理员)
+      tags:
+      - 核算
+    post:
+      parameters:
+      - description: 核算信息
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/AddAccountingBody'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 根据合同号核算
+      tags:
+      - 核算
+  /api/v1/accounting/export:
+    get:
+      parameters:
+      - description: 搜索关键字(合同号、被拆迁人)
+        in: query
+        name: filterName
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 导出核算表(管理员)
+      tags:
+      - 核算
+  /api/v1/admin/get:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取所有的管理员账号和姓名
+      tags:
+      - 管理员
+  /api/v1/admin/login:
+    post:
+      parameters:
+      - description: 登录信息
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/AdminLoginBody'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      summary: 管理员登录账号admin密码123456
+      tags:
+      - 管理员
+  /api/v1/admin/update:
+    post:
+      parameters:
+      - description: 手机号码，旧密码，新密码
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/AdminUpdateBody'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 修改密码(账号，旧密码，新密码)
+      tags:
+      - 管理员
+  /api/v1/config/declaration/active/get:
+    get:
+      description: 查询摇珠不中是否计入总数状态(0：表示不计入总数，1：表示计入总数)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      summary: 查询摇珠不中是否计入总数状态(0：表示不计入总数，1：表示计入总数)
+      tags:
+      - 全局配置
+  /api/v1/config/declaration/active/setting:
+    get:
+      description: 后台管理员设置摇珠不中是否计入总数
+      parameters:
+      - description: 状态 --0：申报不计入总数；1：申报计入总数
+        in: query
+        name: state
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 设置摇珠不中是否计入总数
+      tags:
+      - 全局配置
+  /api/v1/config/huxing/groupingOptional/get:
+    get:
+      description: 查询分组总可选套数
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      summary: 查询分组总可选套数
+      tags:
+      - 全局配置
+  /api/v1/config/huxing/groupingOptional/setting:
+    post:
+      description: 后台管理员设置分组总可选套数
+      parameters:
+      - description: 配置信息
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/GroupingOptionalBody'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 设置分组总可选套数
+      tags:
+      - 全局配置
+  /api/v1/config/rounds/get:
+    get:
+      description: 获取当前轮次
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      summary: 获取当前轮次
+      tags:
+      - 全局配置
+  /api/v1/config/rounds/setting:
+    get:
+      description: 后台管理员设置当前轮次
+      parameters:
+      - description: 分期id值
+        in: query
+        name: rounds
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 设置当前轮次
+      tags:
+      - 全局配置
+  /api/v1/config/staging/get:
+    get:
+      description: 获取当前分期
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      summary: 获取当前分期
+      tags:
+      - 全局配置
+  /api/v1/config/staging/setting:
+    get:
+      description: 后台管理员设置当前分期
+      parameters:
+      - description: 分期id值
+        in: query
+        name: stagingId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 设置当前分期
+      tags:
+      - 全局配置
+  /api/v1/contract/addCardNumber:
+    post:
+      description: 根据合同号增加身份证
+      parameters:
+      - description: 证件号
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/AddCardNumberBody'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 根据合同号增加身份证
+      tags:
+      - 合同单
+  /api/v1/contract/new:
+    post:
+      description: 根据分期期数新增合同单
+      parameters:
+      - description: 合同信息
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.AddContractBody'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 根据分期期数新增合同单
+      tags:
+      - 合同单
+  /api/v1/contract/supplement:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 拆迁人Excel原始数据
+        in: formData
+        name: excel
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 补充导入指标安置面积、计算临迁费面积
+      tags:
+      - 合同单
+  /api/v1/contract/updateHouseWriteOff:
+    post:
+      description: 传入一个合同号数组和一个要设置的房屋注销选项，批量修改
+      parameters:
+      - description: 根据合同号批量修改是否注销
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/UpdateHouseWriteOffBody'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 根据合同号确定每一项合同是否完成房屋注销的选项
+      tags:
+      - 合同单
+  /api/v1/declaration/add:
+    post:
+      description: 根据合同号新增申报(操作人 管理员姓名、登录人姓名)
+      parameters:
+      - description: 申报信息
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.AddDeclarationBody'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 根据合同号新增申报(操作人 管理员姓名、登录人姓名)
+      tags:
+      - 申报单
+  /api/v1/declaration/addNew:
+    post:
+      description: 根据合同号新增申报(操作人 管理员姓名、登录人姓名)
+      parameters:
+      - description: 申报信息
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/api.AddDeclarationBody'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 根据合同号新增申报(操作人 管理员姓名、登录人姓名)
+      tags:
+      - 申报单
+  /api/v1/declaration/getAdminName:
+    get:
+      description: 申报表打印管理员姓名(管理员)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 申报表打印管理员姓名(管理员)
+      tags:
+      - 申报单
+  /api/v1/declaration/getAll:
+    get:
+      description: 获取所有的申报表列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取所有的申报表列表
+      tags:
+      - 申报单
+  /api/v1/declaration/printing:
+    post:
+      parameters:
+      - description: 申报表ID
+        in: query
+        name: declaration_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 打印申报表(管理员)
+      tags:
+      - 申报单
+  /api/v1/declaration/updateDeclarationStatus:
+    post:
+      description: 根据申报表ID更改申报状态(管理员)
+      parameters:
+      - description: 申报ID（必须）
+        in: query
+        name: declaration_id
+        required: true
+        type: integer
+      - description: 申报表申报状态（必须）-- 0：表示进行中；1：表示已确定
+        in: query
+        name: status
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 根据申报表ID更改申报状态(管理员)
+      tags:
+      - 申报单
+  /api/v1/huxing/get/optional:
+    get:
+      description: 获取户型（可选>0以上的）
+      parameters:
+      - description: 分期期数
+        in: query
+        name: staging_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      summary: 获取户型（可选>0以上的）
+      tags:
+      - 户型
+  /api/v1/information/delete:
+    post:
+      description: 后台管理员删除资讯
+      parameters:
+      - description: 资讯id
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/DeleteInformationBody'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 删除资讯
+      tags:
+      - 资讯
+  /api/v1/information/get:
+    get:
+      description: 分页获取资讯列表
+      parameters:
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 页面大小
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取资讯列表
+      tags:
+      - 资讯
+  /api/v1/information/new:
+    post:
+      description: 后台管理员新增资讯
+      parameters:
+      - description: 资讯标题（必须），内容（必须），图片(base64字符串),图片后缀(例如.jpg)
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/NewInformationBody'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 新增资讯
+      tags:
+      - 资讯
+  /api/v1/information/updateStatus:
+    post:
+      description: 后台管理员修改资讯状态
+      parameters:
+      - description: 资讯id(必须),status状态int（0待发布中,1已发布）
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/UpdateInformationStatusBody'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 修改资讯状态
+      tags:
+      - 资讯
+  /api/v1/information/upload:
+    post:
+      description: 上传图片，返回图片链接
+      parameters:
+      - description: 上传图片的信息
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/UploadImageBody'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      summary: 上传图片，返回图片链接
+      tags:
+      - 资讯
+  /api/v1/result/export:
+    post:
+      description: 根据分期期数（必须）导出摇珠表列表(管理员)
+      parameters:
+      - description: 分期期数（必须）
+        in: query
+        name: stagingId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 导出摇珠表列表(管理员)
+      tags:
+      - 公示
+  /api/v1/result/get:
+    get:
+      description: 根据分期期数（必须）、户型、身份证号、合同号、手机号 模糊查询分页查询摇珠结果列表（筛选功能）(管理员)
+      parameters:
+      - description: 分期期数（必须）
+        in: query
+        name: stagingId
+        required: true
+        type: integer
+      - description: 搜索关键字(姓名、身份证号、合同号、手机号)
+        in: query
+        name: filterName
+        type: string
+      - description: 户型id
+        in: query
+        name: huxing_id
+        type: integer
+      - description: 是否公示  0表示公示状态为false的数据，1表示公示状态为true的数据，不选则显示所有
+        in: query
+        name: 公示状态
+        type: integer
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 页面大小
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 根据分期期数（必须）、户型、公示状态、身份证号、合同号、手机号 模糊查询分页查询摇珠结果列表（筛选功能）(管理员)
+      tags:
+      - 公示
+  /api/v1/staging/getCount:
+    get:
+      description: 分页根据分期id查询分期信息(包括每个分期合同单的数量)
+      parameters:
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 页面大小
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 分页查询分期信息(包括每个分期合同单的数量)
+      tags:
+      - 分期
+  /api/v1/staging/import:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 后台管理员根据分期期数导入合同单原始数据
+      parameters:
+      - description: 分期期数
+        in: formData
+        name: stagingId
+        required: true
+        type: integer
+      - description: 拆迁人Excel原始数据
+        in: formData
+        name: excel
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 导入合同单原始数据
+      tags:
+      - 分期
+  /api/v1/user/findMyself:
+    get:
+      parameters:
+      - description: 用户通过手机号查看身份信息
+        in: query
+        name: phone
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 用户通过手机查看自己的身份信息
+      tags:
+      - 用户
+  /api/v1/user/get:
+    get:
+      parameters:
+      - description: 手机号码
+        in: query
+        name: phone_number
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      summary: 获取验证码(注册)
+      tags:
+      - 用户
+  /api/v1/user/register:
+    post:
+      parameters:
+      - description: 注册信息
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/UserRegisterBody'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      summary: 注册(通过手机号码+密码注册+验证码)
+      tags:
+      - 用户
+  /api/v1/user/validator:
+    post:
+      parameters:
+      - description: 用户身份信息
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/UserInfoBody'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 用户进行身份核验
+      tags:
+      - 用户
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
